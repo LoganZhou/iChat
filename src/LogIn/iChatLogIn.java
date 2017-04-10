@@ -5,6 +5,13 @@
  */
 package LogIn;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author a8756
@@ -150,7 +157,8 @@ public class iChatLogIn extends javax.swing.JFrame {
         passwd = passwdField.getPassword();
         passwdString = String.valueOf(passwd);
         iChatUser user = new iChatUser(userName,passwdString);
-        user.logIn();
+        //登陆
+        logIn(user);
     }//GEN-LAST:event_logInButtonMouseClicked
 
     private void signInLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signInLabelMouseClicked
@@ -161,7 +169,52 @@ public class iChatLogIn extends javax.swing.JFrame {
         signIn.setDefaultCloseOperation(iChatSignIn.HIDE_ON_CLOSE);
         signIn.setVisible(true);
     }//GEN-LAST:event_signInLabelMouseClicked
-
+    
+    private void logIn(iChatUser user) {
+        /**
+         * 登陆模块
+         */
+        Connection conn = iChatConnection.getConn();
+        String checkUserName = "SELECT 1 FROM iChat.`user` WHERE iChat.`user`.`User_Name` = ? LIMIT 1";
+        String checkPassword = "SELECT * FROM iChat.`user` WHERE iChat.`user`.`User_Name` = ? AND iChat.`user`.`Password` = ?";
+        PreparedStatement pstmt;
+        try {
+            pstmt = (PreparedStatement) conn.prepareStatement(checkUserName);
+            pstmt.setString(1,user.getUserName());
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                /*如果非空，则存在该用户*/
+                pstmt = (PreparedStatement) conn.prepareStatement(checkPassword);
+                pstmt.setString(1,user.getUserName());
+                pstmt.setString(2,user.getPassword());
+                rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    //登陆成功
+                    System.out.println("登陆成功！");
+                }
+                else {
+                    //密码错误
+                    System.out.println("密码错误！");
+                }
+            }
+            else {
+                //该用户不存在
+                System.out.println("该用户不存在！");
+                
+            }
+        } catch (SQLException e) {
+            //未知错误
+            e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(iChatUser.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    
     /**
      * @param args the command line arguments
      */

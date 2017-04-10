@@ -5,6 +5,12 @@
  */
 package LogIn;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -262,15 +268,11 @@ public class iChatSignIn extends javax.swing.JFrame {
         String userName = nameTextField.getText();
         String passwd = passwdTextField.getText();
         iChatUser newUser = new iChatUser(userName, passwd);
-        if (newUser.signIn()!=0) {
+        if (signIn(newUser)!=0) {
             //注册成功
-            userIDTextField.setText(String.valueOf(newUser.returnID()));
+            userIDTextField.setText(String.valueOf(returnID(newUser)));
             signInSucceedDialog.setVisible(true);
         } 
-        else {
-            //注册失败
-            signInFailedDialog.setVisible(true);
-        }
     }//GEN-LAST:event_signInButtonMouseClicked
 
     private void signInSuccessfulButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signInSuccessfulButtonMouseClicked
@@ -279,6 +281,7 @@ public class iChatSignIn extends javax.swing.JFrame {
          */
         signInSucceedDialog.setVisible(false);
         this.setVisible(false);
+        
     }//GEN-LAST:event_signInSuccessfulButtonMouseClicked
 
     private void signInFailedButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_signInFailedButtonMouseClicked
@@ -291,7 +294,64 @@ public class iChatSignIn extends javax.swing.JFrame {
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         
     }//GEN-LAST:event_formWindowClosed
-
+    
+    private int signIn(iChatUser user) {
+        /**
+         * 注册模块
+         * 参数： iChatUser user
+         * 返回值： 表修改成功条数
+         */
+        Connection conn = iChatConnection.getConn();
+        int i = 0;
+        long userID;
+        String sql = "insert into user (User_name, Password) value(?,?)";
+        PreparedStatement pstmt;
+        try {
+            pstmt = (PreparedStatement) conn.prepareStatement(sql);
+            pstmt.setString(1,user.getUserName());
+            pstmt.setString(2,user.getPassword());
+            i = pstmt.executeUpdate();  //更新条数，如果为0，则失败
+            pstmt.close();
+            conn.close();
+        } catch (SQLException e) {
+            //e.printStackTrace();
+            //System.out.println("注册失败：用户名重复！");
+            //注册失败
+            signInFailedDialog.setVisible(true);
+        }
+        return i;
+    }
+    
+    private long returnID(iChatUser user) {
+        Connection conn = iChatConnection.getConn();
+        long userID;
+        String UID = null;
+        String getID = "select User_ID from iChat.`user` where iChat.`user`.`User_Name` = ?";
+        PreparedStatement pstmt;
+        try {
+            pstmt = (PreparedStatement) conn.prepareStatement(getID);
+            pstmt.setString(1,user.getUserName());
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                UID = rs.getString(1);
+            }
+            userID = Long.valueOf(UID);
+            pstmt.close();
+            user.setUserID(userID);
+            return userID;
+        } catch (SQLException e) {
+            //e.printStackTrace();
+            System.out.println("查询失败！");
+            return -1;
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(iChatUser.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */
