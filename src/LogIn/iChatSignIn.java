@@ -46,7 +46,6 @@ public class iChatSignIn extends javax.swing.JFrame {
         nameNote = new javax.swing.JLabel();
         signInButton = new javax.swing.JButton();
 
-        signInSucceedDialog.setPreferredSize(new java.awt.Dimension(300, 250));
         signInSucceedDialog.setSize(new java.awt.Dimension(300, 250));
 
         signInSuccessfulButton.setText("确定");

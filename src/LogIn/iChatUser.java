@@ -47,8 +47,8 @@ public class iChatUser {
     private Connection getConn() {
         String driver = "com.mysql.jdbc.Driver";
         String url = "jdbc:mysql://119.29.8.35:3306/iChat?useSSL=false";
-        String username = "root";
-        String password = "zhouHENG97";
+        String username = "iChatAdmin";
+        String password = "hzauiChat8756";
         Connection conn = null;
         try {
             Class.forName(driver);
