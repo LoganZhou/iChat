@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package LogIn;
+import java.io.Serializable;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,17 +14,55 @@ import java.util.logging.Logger;
  * 存储用户信息
  * @author a8756
  */
-public class iChatUser {
+public class iChatUser implements Serializable{
     private String userName;
     private String password;
     private long userID;
 
-    iChatUser(String userName, String password) {
+    /**
+     * 登陆用User构造函数
+     * @param userID
+     * @param password 
+     */
+    public iChatUser(long userID, String password) {
+        this.userID = userID;
+        this.password = password;
+        this.userName = ""; //default
+    }
+    
+    public iChatUser(String userName, long userID) {
+        this.userName = userName;
+        this.userID = userID;
+        this.password = "";
+    }
+    
+    /**
+     * 注册用User构造函数
+     * @param userName
+     * @param password 
+     */
+    public iChatUser(String userName, String password) {
         this.userName = userName;
         this.password = password;
-        this.userID = 0; //default
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof iChatUser)) {
+            return false;
+        }
+        iChatUser tempUser = (iChatUser) obj;
+        return this.userID == tempUser.userID && this.userName.equals(tempUser.userName);
     }
 
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 37 * result + userName.hashCode();
+        result = 37 * result + (int)(userID^(userID >>> 32));
+        return result;
+    }
+    
     private void selectAll() {
         Connection conn = iChatConnection.getConn();
         String sql = "select * from user";

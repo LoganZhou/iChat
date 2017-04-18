@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package LogIn;
+package Program;
 
 /**
- * 注册模块
+ * 私聊窗口关闭监听接口
  * @author a8756
  */
-public class iChatSignIn {
-    private SignInUI signInUI;
+public interface ClosePrivateWindowListener {
+    public void closingPrivateWindow(ClosePrivateWindowEvent event);
 }
