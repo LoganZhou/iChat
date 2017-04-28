@@ -19,7 +19,7 @@ import javax.swing.JScrollPane;
 
 
 /**
- *
+ * 群聊窗口
  * @author a8756
  */
 public class iChatGroupChatUI extends javax.swing.JFrame {

@@ -5,11 +5,13 @@
         <group>
             <file>file:/D:/Java%20Code/iChat/src/GroupChat/iChatGroupChatUI.java</file>
             <file>file:/D:/Java%20Code/iChat/src/PrivateChat/iChatPrivateChatUI.java</file>
+            <file>file:/D:/Java%20Code/iChat/src/log4j.properties</file>
             <file>file:/D:/Java%20Code/iChat/src/Program/iChatFriendsListModel.java</file>
+            <file>file:/D:/Java%20Code/iChat/src/LogIn/iChatLogin.java</file>
             <file>file:/D:/Java%20Code/iChat/src/Program/MainUI.java</file>
-            <file>file:/D:/Java%20Code/iChat/src/Program/iChatIOManager.java</file>
+            <file>file:/D:/Java%20Code/iChat/src/LogIn/LoginUI.java</file>
+            <file>file:/D:/Java%20Code/iChat/src/Program/iChatUserListRenderer.java</file>
             <file>file:/D:/Java%20Code/iChat/src/Server/iChatServer.java</file>
-            <file>file:/D:/Java%20Code/iChat/src/PrivateChat/iChatMessage.java</file>
         </group>
     </open-files>
 </project-private>

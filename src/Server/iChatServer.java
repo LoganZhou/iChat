@@ -17,6 +17,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import jdk.nashorn.internal.codegen.CompilerConstants;
+import org.apache.logging.log4j.*;
+
 
 /**
  * 私聊服务端
@@ -27,6 +30,8 @@ import java.util.logging.Logger;
 public class iChatServer {
     private ServerSocket serverSocket;
     private Map<iChatUser, ServerThread> clientsMap = new HashMap<iChatUser, ServerThread>();       //连接线程，每个客户端一个线程
+    private Logger serverLogger = Logger.getLogger("iChatServer");
+
     
     public static void main(String[] args) {
         iChatServer chatServer = new iChatServer();
@@ -39,8 +44,9 @@ public class iChatServer {
          */
         try {
             serverSocket = new ServerSocket(4444);
+            serverLogger.info("服务端启动成功！");
         } catch (IOException e) {
-            System.err.println("Could not listen on port: 4444.");
+            serverLogger.log(Level.SEVERE, "服务端启动失败，程序结束！");
             System.exit(1);
         }
     }
@@ -54,10 +60,10 @@ public class iChatServer {
             try {
                 clientSocket = serverSocket.accept();
             } catch (IOException e) {
-                System.out.println("Log: Accept failed.");
+                serverLogger.log(Level.SEVERE, "客户端连接失败，程序退出！");
                 System.exit(1);
             }
-            System.out.println("Log: Accept OK!");
+            serverLogger.info("客户端连接成功！");
             ServerThread sThread = new ServerThread(clientSocket);
             new Thread(sThread).start();    //启动线程
         }
@@ -74,29 +80,31 @@ public class iChatServer {
         private boolean isRunning = true;           //线程运行状态标志
         private ObjectInputStream objectInputStream;  //对象输入流
         private ObjectOutputStream objectOutputStream;//对象输出流
-        
+        private Logger threadLogger = Logger.getLogger("iChatServer.ServerThread");
         public ServerThread(Socket socket) {
             this.clientSocket = socket;
-            
-            
-            
+
             try {
                 //连接顺序：先客户端发送自己的信息，然后建立OutputStream
                 objectInputStream = new ObjectInputStream(socket.getInputStream());
                 objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             } catch (IOException e) {
-                e.printStackTrace();
+                threadLogger.log(Level.WARNING, "初始化IO流出错！", e);
             }
             try {
                 user = (iChatUser) objectInputStream.readObject();      //接收客户端身份信息
-                System.out.println("用户 " + user.getUserName() + " 已连接！");
+                threadLogger.info("用户 " + user.getUserName() + " 已连接！");
+                //System.out.println("用户 " + user.getUserName() + " 已连接！");
             } catch (IOException e) {
-                e.printStackTrace();
+                threadLogger.log(Level.WARNING, "读取客户端信息出错！", e);
+                //e.printStackTrace();
             } catch (ClassNotFoundException ex) {
-                Logger.getLogger(iChatServer.class.getName()).log(Level.SEVERE, null, ex);
+                threadLogger.log(Level.WARNING, "ClassNotFound！", ex);
+                //Logger.getLogger(iChatServer.class.getName()).log(Level.SEVERE, null, ex);
             }
             clientsMap.put(user,this);                                      //将线程添加到Map中
-            System.out.println("Log: " + clientsMap.size() + " client connections.");
+            threadLogger.info("Log: " + clientsMap.size() + " client connections.");
+            //System.out.println("Log: " + clientsMap.size() + " client connections.");
             /*更新数据库中在线数据*/
             updateOnlineData(true);
         }
@@ -110,10 +118,12 @@ public class iChatServer {
                 pstmt = (PreparedStatement) conn.prepareStatement(updateOnlineStare);
                 pstmt.setString(1,user.getUserName());
                     if (pstmt.execute()) {
-                        System.out.println("在线状态更新成功！");
+                        threadLogger.info("用户在线状态更新成功！");
+                        //System.out.println("在线状态更新成功！");
                     }
             } catch (SQLException ex) {
-                Logger.getLogger(iChatServer.class.getName()).log(Level.SEVERE, null, ex);
+                threadLogger.log(Level.WARNING, "用户在线状态信息更新失败，访问数据库出错！", ex);
+                //Logger.getLogger(iChatServer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         public String getUser() {
@@ -132,21 +142,25 @@ public class iChatServer {
                 try {
                     msg = (iChatMessage) objectInputStream.readObject();   //读取消息 
                 } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(iChatServer.class.getName()).log(Level.SEVERE, null, ex);
+                    threadLogger.log(Level.WARNING, "读取客户端消息失败！", ex);
+                    //Logger.getLogger(iChatServer.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 if (!msg.isDisconnect()) {
                     msg.setMsgSendTime(new Date());                        //设置消息时间
-                    System.out.println("接收到消息！");
+                    threadLogger.info("接收到来自客户端的消息！");
+                    //System.out.println("接收到消息！");
                     if (msg.getMsgType() == iChatMessage.PRIVATE_MESSAGE) {
                         //该消息为私聊消息
                         targetUser = msg.getTarget();
                         targetClient = clientsMap.get(msg.getTarget());
-                        System.out.println("发送给ID为" + msg.getTarget().getUserID());
+                        threadLogger.info("发送给ID为" + msg.getTarget().getUserID());
+                        //System.out.println("发送给ID为" + msg.getTarget().getUserID());
 
                         if (targetClient != null) {
                             sendMessage(targetClient, msg);  //发送消息到目标客户端
                         } else {
-                            System.out.println("null pointer!");
+                            threadLogger.info("发送消息目标客户端不在线！");
+                            //System.out.println("null pointer!");
                         }
                     } else {
                         //该消息为群聊消息，遍历所有连接，发送消息
@@ -170,11 +184,12 @@ public class iChatServer {
                 /**
                  * 发送消息到目标客户端
                  */
-                System.out.println("准备发送消息！");
+                //System.out.println("准备发送消息！");
                 target.objectOutputStream.writeObject(msg);
             } catch (IOException ex) {
-                System.out.println("Log: 发送消息失败！");
-                Logger.getLogger(iChatServer.class.getName()).log(Level.SEVERE, null, ex);
+                //System.out.println("Log: 发送消息失败！");
+                threadLogger.log(Level.WARNING, "发送消息失败！", ex);
+                //Logger.getLogger(iChatServer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 
@@ -184,8 +199,10 @@ public class iChatServer {
              */
             isRunning = false;
             clientsMap.remove(user);
-            System.out.println("Log: 用户 " + user.getUserName() + " 断开连接！");
-            System.out.println("Log: " + clientsMap.size() + " client connections.");
+            threadLogger.info("用户 " + user.getUserName() + " 断开连接！");
+            threadLogger.info(clientsMap.size() + " client connections.");
+            //System.out.println("Log: 用户 " + user.getUserName() + " 断开连接！");
+            //System.out.println("Log: " + clientsMap.size() + " client connections.");
             
             /*更新数据库在线用户信息*/
             updateOnlineData(false);
@@ -196,15 +213,17 @@ public class iChatServer {
                 try {
                     receiveMessage();
                 } catch (IOException e) {
-                    System.out.println("Log: 用户 " + user.getUserName() + " 意外中断！");
-                    e.printStackTrace();
+                    threadLogger.log(Level.WARNING, "用户 " + user.getUserName() + " 意外中断！", e);
+                    //System.out.println("Log: 用户 " + user.getUserName() + " 意外中断！");
+                    //e.printStackTrace();
                 } finally {
                     killThread();
                     if (clientSocket != null) {
                         try {
                             clientSocket.close();
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            threadLogger.log(Level.WARNING, "Socket关闭失败！", e);
+                            //e.printStackTrace();
                         }
                     }
                 }
