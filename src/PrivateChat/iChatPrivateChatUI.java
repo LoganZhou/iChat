@@ -5,18 +5,30 @@
  */
 package PrivateChat;
 
+import FileTransfer.FileReceiver;
+import FileTransfer.FileSender;
+import FileTransfer.FileTransferProgress;
 import LogIn.iChatUser;
 import Program.ClosePrivateWindowManager;
 import Program.iChatIOManager;
+import java.io.File;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.text.DateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JProgressBar;
 
 /**
  *
  * @author a8756
  */
 public class iChatPrivateChatUI extends javax.swing.JFrame {
-    private iChatIOManager ioManager;                            //主程序模块
+    private iChatIOManager ioManager;                       //主程序IO模块
     private iChatUser targetUser;                           //目标用户
     private ClosePrivateWindowManager closeWindowManager;   //私聊窗口关闭管理器
     
@@ -36,7 +48,11 @@ public class iChatPrivateChatUI extends javax.swing.JFrame {
         this.setVisible(true);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
-
+    
+    /**
+     * 显示接收到的消息
+     * @param msg 
+     */
     public void setReceiveAreaMsg(iChatMessage msg) {
         iChatUser user= msg.getSource();
         DateFormat dateFormat = DateFormat.getDateTimeInstance();
@@ -44,6 +60,34 @@ public class iChatPrivateChatUI extends javax.swing.JFrame {
         receiveArea.append(user.getUserName() + "(" + user.getUserID() + "): " + timeString + "\n");
         receiveArea.append(msg.getMsg() + "\n");
     }
+    
+    /**
+     * 启动文件传输
+     * @param IPAddress
+     * @param file 
+     */
+    public void startToSendFile(iChatFileMessage msg) {
+        System.out.println("开始发送文件！");
+        String IPAddress = msg.getMsg();
+        File file = msg.getFile();
+        //显示传输对话框
+        //sendDialog.setVisible(true);
+        FileTransferProgress sendProgress = new FileTransferProgress(FileTransferProgress.SEND_PROGRESS);
+        sendProgress.setVisible(true);
+        //创建sender
+        FileSender sender = new FileSender(IPAddress, sendProgress);
+        sender.sendFile(file);
+        //关闭传输进度窗口
+        //sendProgress.dispose();
+        //sendDialog.setVisible(false);
+    }
+    
+    public void initFileReceiver() {
+        
+    }
+    
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -60,6 +104,7 @@ public class iChatPrivateChatUI extends javax.swing.JFrame {
         sendBt = new javax.swing.JButton();
         closeBt = new javax.swing.JButton();
         targetLabel = new javax.swing.JTextField();
+        sendFileBt = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setLocationByPlatform(true);
@@ -107,6 +152,18 @@ public class iChatPrivateChatUI extends javax.swing.JFrame {
             }
         });
 
+        sendFileBt.setText("发送文件");
+        sendFileBt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                sendFileBtMouseClicked(evt);
+            }
+        });
+        sendFileBt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendFileBtActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -115,14 +172,17 @@ public class iChatPrivateChatUI extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(sendFileBt)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(targetLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 670, Short.MAX_VALUE)
                             .addComponent(jScrollPane2)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 222, Short.MAX_VALUE)
+                                .addGap(0, 0, Short.MAX_VALUE)
                                 .addComponent(closeBt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(sendBt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -133,7 +193,9 @@ public class iChatPrivateChatUI extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(15, 15, 15)
                 .addComponent(targetLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(15, 15, 15)
+                .addComponent(sendFileBt)
+                .addGap(17, 17, 17)
                 .addComponent(jScrollPane2)
                 .addGap(30, 30, 30)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -165,9 +227,33 @@ public class iChatPrivateChatUI extends javax.swing.JFrame {
 
     private void sendBtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendBtMouseClicked
         // 点击发送按钮
-        ioManager.sendMessage(new iChatMessage(targetUser, ioManager.getUser(), sendArea.getText()));
+        ioManager.sendMessage(new iChatMessage(targetUser, ioManager.getUser(), 
+                                sendArea.getText(), iChatMessage.PRIVATE_MESSAGE));
+        
+        //将发送信息添加到接受框
+        DateFormat dateFormat = DateFormat.getDateTimeInstance();
+        String timeString = dateFormat.format(new Date());
+        receiveArea.append("我: " + timeString + "\n");
+        receiveArea.append(sendArea.getText() + "\n");
+
         sendArea.setText("");    //清空输入框
     }//GEN-LAST:event_sendBtMouseClicked
+
+    private void sendFileBtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendFileBtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sendFileBtActionPerformed
+
+    private void sendFileBtMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendFileBtMouseClicked
+        // 点击发送文件按钮发送文件
+        JFileChooser sendFileChooser = new JFileChooser();
+        sendFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        sendFileChooser.showOpenDialog(this);
+        File sendFile = sendFileChooser.getSelectedFile();
+        //文件发送请求
+        ioManager.sendMessage(new iChatFileMessage(targetUser, ioManager.getUser(), 
+                iChatFileMessage.SEND_FILE_MESSAGE,sendFile,null));   
+        //System.out.println("选择文件：" + sendFile.getAbsolutePath());
+    }//GEN-LAST:event_sendFileBtMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -177,6 +263,7 @@ public class iChatPrivateChatUI extends javax.swing.JFrame {
     private javax.swing.JTextArea receiveArea;
     private javax.swing.JTextArea sendArea;
     private javax.swing.JButton sendBt;
+    private javax.swing.JButton sendFileBt;
     private javax.swing.JTextField targetLabel;
     // End of variables declaration//GEN-END:variables
 }

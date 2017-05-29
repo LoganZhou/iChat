@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Program;
+package GroupChat;
 
 import LogIn.iChatUser;
 import java.awt.Component;
@@ -15,21 +15,15 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
 /**
- * 自定义单元渲染器
- * @author a8756
+ *
+ * @author zhouheng
  */
-public class iChatUserListRenderer extends JPanel implements ListCellRenderer {
+public class GroupChatListRenderer extends JPanel implements ListCellRenderer {
     private JLabel userLabel;
-    private int width;
-    private int height;
-    private Font font;
-    public iChatUserListRenderer(int width, int height, Font font) {
-        this.setPreferredSize(new Dimension(width,height));
-        this.width = width;
-        this.height = height;
-        this.font = font;
+    
+    public GroupChatListRenderer() {
+        this.setPreferredSize(new Dimension(150,40));
     }
-
     
     @Override
     public Component getListCellRendererComponent(JList list, 
@@ -40,10 +34,8 @@ public class iChatUserListRenderer extends JPanel implements ListCellRenderer {
         iChatUser user = (iChatUser)value;
         String userInfo = user.getUserName() + "(" + user.getUserID() + ")";
         userLabel = new JLabel(userInfo);
-        userLabel.setBounds(5, 5, this.width, this.height);
-        userLabel.setFont(font);
-        //userLabel.setBounds(5, 5, 250, 30);
-        //userLabel.setFont(new Font("微软雅黑",0,18));
+        userLabel.setBounds(5, 5, 250, 30);
+        userLabel.setFont(new Font("微软雅黑",0,18));
         removeAll();
         add(userLabel);
         
@@ -57,6 +49,4 @@ public class iChatUserListRenderer extends JPanel implements ListCellRenderer {
         }
         return this;
     }
-
-    
 }

@@ -149,8 +149,8 @@ public class iChatServer {
                     msg.setMsgSendTime(new Date());                        //设置消息时间
                     threadLogger.info("接收到来自客户端的消息！");
                     //System.out.println("接收到消息！");
-                    if (msg.getMsgType() == iChatMessage.PRIVATE_MESSAGE) {
-                        //该消息为私聊消息
+                    if (msg.getMsgType() != iChatMessage.GROUP_MESSAGE) {
+                        //该消息为私聊消息或文件传输类消息
                         targetUser = msg.getTarget();
                         targetClient = clientsMap.get(msg.getTarget());
                         threadLogger.info("发送给ID为" + msg.getTarget().getUserID());
@@ -162,7 +162,7 @@ public class iChatServer {
                             threadLogger.info("发送消息目标客户端不在线！");
                             //System.out.println("null pointer!");
                         }
-                    } else {
+                    } else if (msg.getMsgType() == iChatMessage.GROUP_MESSAGE){
                         //该消息为群聊消息，遍历所有连接，发送消息
                         Iterator iter = clientsMap.entrySet().iterator();
                         while (iter.hasNext()) {

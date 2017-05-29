@@ -70,7 +70,6 @@ public class iChatKernel implements LoginListener{
         mainWindow.setVisible(true);
         updateListThread checkOnlineThread = new updateListThread();
         new Thread(checkOnlineThread).start();
-        
     }
     
     /**

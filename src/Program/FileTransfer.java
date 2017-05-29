@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package PrivateChat;
+package Program;
 
 /**
  *
  * @author a8756
  */
-public class iChatPrivateChat {
+public class FileTransfer {
     
 }

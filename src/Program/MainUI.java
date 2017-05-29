@@ -9,6 +9,8 @@ import LogIn.iChatUser;
 import PrivateChat.iChatMessage;
 import PrivateChat.iChatPrivateChatUI;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.Socket;
@@ -36,14 +38,14 @@ public class MainUI extends javax.swing.JFrame implements ClosePrivateWindowList
     public MainUI(Socket socket, iChatUser user, HashSet<iChatUser> onlineListSet) {
         this.socket = socket;
         this.user = user;
-        this.ioManager = new iChatIOManager(socket, user);
+        this.ioManager = new iChatIOManager(socket, user, this);
         this.onlineListSet = onlineListSet;
         initComponents();
         String welcomeStr = user.getUserName() + welcomeLabel.getText();
         welcomeLabel.setText(welcomeStr);
         friendsListModel = new iChatFriendsListModel(onlineListSet);
         friendsList = new JList(friendsListModel);
-        friendsList.setCellRenderer(new iChatUserListRenderer());
+        friendsList.setCellRenderer(new iChatUserListRenderer(250,40,new Font("微软雅黑",0,18)));
         friendsList.setSize(jListPanel.getWidth(), jListPanel.getHeight());
         //friendsList.setPreferredSize(new Dimension(245,450));
         //friendsList.setBounds(15, 50, 245, 450);
@@ -83,6 +85,7 @@ public class MainUI extends javax.swing.JFrame implements ClosePrivateWindowList
     private void jListDoubleClick(Object value) {
         System.out.println("double click");
         iChatUser targetUser = (iChatUser)value;
+        //窗口关闭监听管理器
         ClosePrivateWindowManager manager = new ClosePrivateWindowManager();
         manager.addClosePrivateWindowListener(this);
         ioManager.putValue(targetUser, new iChatPrivateChatUI(ioManager,targetUser,manager));

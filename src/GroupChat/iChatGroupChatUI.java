@@ -11,6 +11,8 @@ import Program.iChatFriendsListModel;
 import Program.iChatIOManager;
 import Program.iChatUserListRenderer;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.text.DateFormat;
 import java.util.HashSet;
 import javax.swing.JFrame;
@@ -38,7 +40,7 @@ public class iChatGroupChatUI extends javax.swing.JFrame {
         
         friendsListModel = new iChatFriendsListModel(onlineListSet);
         onlineList = new JList(friendsListModel);
-        onlineList.setCellRenderer(new iChatUserListRenderer());
+        onlineList.setCellRenderer(new iChatUserListRenderer(150,35,new Font("微软雅黑",0,15)));
         onlineList.setSize(onlineListPanel.getWidth(), onlineListPanel.getHeight());
 
         /*添加滚动条*/
@@ -159,19 +161,16 @@ public class iChatGroupChatUI extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(156, Short.MAX_VALUE)
+                        .addGap(0, 146, Short.MAX_VALUE)
                         .addComponent(closeBt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(sendBt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(15, 15, 15))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE))
-                        .addGap(15, 15, 15)))
+                        .addComponent(sendBt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE))
+                .addGap(15, 15, 15)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(onlineListPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(numbersLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
@@ -213,7 +212,7 @@ public class iChatGroupChatUI extends javax.swing.JFrame {
         //发送按钮
         String msg = inputArea.getText();
         if (msg != null) {
-            ioManager.sendMessage(new iChatMessage(myself,msg,iChatMessage.GROUP_MESSAGE));
+            ioManager.sendMessage(new iChatMessage(myself,msg));
         }
         inputArea.setText("");
     }//GEN-LAST:event_sendBtMouseClicked
