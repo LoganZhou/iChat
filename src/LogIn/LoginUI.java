@@ -5,13 +5,15 @@
  */
 package LogIn;
 
+import Utils.iChatUser;
+import SignIn.SignInUI;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JOptionPane;
 
 /**
  *
- * @author a8756
+ * @author ZhouHeng
  */
 public class LoginUI extends javax.swing.JFrame {
     private iChatUser user = null;      //当前登陆用户

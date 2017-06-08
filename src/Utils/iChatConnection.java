@@ -3,21 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package LogIn;
+package Utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import org.apache.log4j.Logger;
 
 /**
- * 连接类
+ * 数据库连接类
  * 返回连接对象
- * @author a8756
+ * @author ZhouHeng
  */
 public class iChatConnection {
+    static private Logger logger = Logger.getLogger(iChatConnection.class);
+    
     /**
-     * 静态方法： 返回一个连接服务器数据库的连接对象
-     * @return Connection
+     * 创建一个数据库连接
+     * @return Connection 连接对象
      */
     public static Connection getConn() {
         String driver = "com.mysql.jdbc.Driver";
@@ -29,9 +32,9 @@ public class iChatConnection {
             Class.forName(driver);
             conn = (Connection) DriverManager.getConnection(url,username,password);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            logger.error("JDBC Driver未找到！",e);
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("SQL执行错误：连接数据库出错！",e);
         }
         return conn;
     }

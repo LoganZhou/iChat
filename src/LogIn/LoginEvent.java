@@ -5,19 +5,17 @@
  */
 package LogIn;
 
-import java.util.EventListener;
 import java.util.EventObject;
 
 /**
  * 登陆事件
  * 触发登陆方法
- * @author a8756
+ * @author ZhouHeng
  */
 public class LoginEvent extends EventObject {
     /**
-     *
-     * @param sourObject
-     * @param loginStatus
+     * 初始化登录事件
+     * @param sourObject 事件来源
      */
     public LoginEvent(Object sourObject) {
         super(sourObject);

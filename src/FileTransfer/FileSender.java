@@ -11,34 +11,39 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
+import org.apache.log4j.Logger;
 
 /**
- *
- * @author a8756
+ * 客户端文件发送器（多线程）
+ * 通信服务器：119.29.8.35：4848
+ * @author ZhouHeng
  */
-public class FileSender {
+public class FileSender implements Runnable{
     private Socket socket;
     private FileInputStream fis;
     private DataOutputStream dos;
     private FileTransferProgress progressDialog;
+    private File sendFile;
+    static private Logger logger = Logger.getLogger(FileSender.class);
     
-    public FileSender(String IPAddress, FileTransferProgress progressDialog) {
+    public FileSender(File sendFile, FileTransferProgress progressDialog) {
         try {
-            this.socket = new Socket(IPAddress, 4848);
+            this.socket = new Socket("127.0.0.1", 14848);
         } catch (IOException ex) {
-            Logger.getLogger(FileSender.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error("文件发送Socket初始化失败！", ex);
         }
         this.progressDialog = progressDialog;
+        this.sendFile = sendFile;
     }
-    public void sendFile(File sendFile) {
+    
+    public void sendFile() {
         try {
             if (sendFile.exists()) {
                 //初始化
+                logger.info("开始发送文件：" + sendFile.getPath());
+                logger.debug("文件长度为：" + sendFile.length());
+                
                 fis = new FileInputStream(sendFile);
                 dos = new DataOutputStream(socket.getOutputStream());
 
@@ -49,7 +54,6 @@ public class FileSender {
                 dos.flush();
 
                 //开始传输文件
-                //System.out.println("=========== 开始传输 ==========");
                 byte[] bytes = new byte[1024];
                 int length = 0;
                 long progress = 0;
@@ -59,20 +63,16 @@ public class FileSender {
                     dos.flush();
                     progress += length;
                     progressDialog.getProgressBar().setValue((int) (100*progress/sendFile.length()));
-                    System.out.println("send:"+(100*progress/sendFile.length()));
-                    //System.out.print("|" + (100*progress/sendFile.length()) + "% |");
                 }
                 //关闭进度窗口
                 progressDialog.dispose();
                 JOptionPane.showMessageDialog(null, "文件发送成功！");
-                
-                //System.out.println();
-                //System.out.println("=========== 传输成功 ==========");
+                logger.info("文件发送成功！");
             }
         }catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error("无法找到该文件！",e);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("文件传输IO流出错！",e);
         } finally {
             try {
                 if (fis != null) {
@@ -83,8 +83,13 @@ public class FileSender {
                 }
                 socket.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("文件传输IO流关闭出错！",e);
             }
         }
+    }
+
+    @Override
+    public void run() {
+        sendFile();
     }
 }

@@ -9,14 +9,16 @@ import javax.swing.JProgressBar;
 
 /**
  *
- * @author a8756
+ * @author ZhouHeng
  */
 public class FileTransferProgress extends javax.swing.JFrame {
     public static final int SEND_PROGRESS = 1;
     public static final int RECEIVE_PROGRESS = 2;
     
     /**
-     * Creates new form FileTransferProgress
+     * 创建一个传输进度对话框
+     * 类型：发送，接收
+     * @param type 对话框类型
      */
     public FileTransferProgress(int type) {
         initComponents();

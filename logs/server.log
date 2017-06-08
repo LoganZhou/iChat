@@ -1,0 +1,42 @@
+[INFO ] 2017-06-02 21:32:29,077 method:Server.iChatServer.<init>(iChatServer.java:53)
+服务端启动成功！
+[INFO ] 2017-06-02 21:32:29,084 method:FileTransfer.ServerFileTransfer.<init>(ServerFileTransfer.java:47)
+文件中转器初始化成功！
+[INFO ] 2017-06-02 21:32:29,085 method:FileTransfer.FileTransferResource.handleRequest(FileTransferResource.java:38)
+当前没有中转请求，进入等待状态。
+[INFO ] 2017-06-02 21:32:56,298 method:Server.iChatServer.launchServer(iChatServer.java:77)
+客户端连接成功！
+[INFO ] 2017-06-02 21:32:56,419 method:Server.iChatServer$ServerThread.<init>(iChatServer.java:110)
+用户 zhouheng 已连接！
+[INFO ] 2017-06-02 21:32:56,422 method:Server.iChatServer$ServerThread.<init>(iChatServer.java:117)
+Log: 1 client connections.
+[INFO ] 2017-06-02 21:33:19,227 method:Server.iChatServer.launchServer(iChatServer.java:77)
+客户端连接成功！
+[INFO ] 2017-06-02 21:33:19,352 method:Server.iChatServer$ServerThread.<init>(iChatServer.java:110)
+用户 111111 已连接！
+[INFO ] 2017-06-02 21:33:19,353 method:Server.iChatServer$ServerThread.<init>(iChatServer.java:117)
+Log: 2 client connections.
+[INFO ] 2017-06-02 21:33:53,434 method:FileTransfer.FileTransferResource.createRequest(FileTransferResource.java:32)
+准备处理文件中转...
+[DEBUG] 2017-06-02 21:33:53,511 method:Server.iChatServer$ServerThread.receiveMessage(iChatServer.java:164)
+original message source:10001
+[DEBUG] 2017-06-02 21:33:53,511 method:Server.iChatServer$ServerThread.receiveMessage(iChatServer.java:165)
+original message target:10000
+[INFO ] 2017-06-02 21:33:53,511 method:FileTransfer.FileTransferResource.handleRequest(FileTransferResource.java:46)
+正在处理文件中转
+[DEBUG] 2017-06-02 21:33:53,512 method:Server.iChatServer$ServerThread.receiveMessage(iChatServer.java:166)
+original message send file:/Users/zhouheng/Downloads/ShadowsocksX-2.6.3.dmg
+[DEBUG] 2017-06-02 21:33:53,513 method:Server.iChatServer$ServerThread.receiveMessage(iChatServer.java:167)
+original message save file:/Users/zhouheng/Downloads/123.dmg
+[INFO ] 2017-06-02 21:33:55,605 method:FileTransfer.ServerFileTransfer.startToTransferFile(ServerFileTransfer.java:91)
+文件中转成功！
+[INFO ] 2017-06-02 21:33:55,609 method:FileTransfer.FileTransferResource.handleRequest(FileTransferResource.java:38)
+当前没有中转请求，进入等待状态。
+[INFO ] 2017-06-02 22:33:35,474 method:Server.iChatServer$ServerThread.killThread(iChatServer.java:229)
+用户 zhouheng 断开连接！
+[INFO ] 2017-06-02 22:33:35,478 method:Server.iChatServer$ServerThread.killThread(iChatServer.java:230)
+1 client connections.
+[INFO ] 2017-06-02 22:33:39,524 method:Server.iChatServer$ServerThread.killThread(iChatServer.java:229)
+用户 111111 断开连接！
+[INFO ] 2017-06-02 22:33:39,525 method:Server.iChatServer$ServerThread.killThread(iChatServer.java:230)
+0 client connections.

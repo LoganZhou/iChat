@@ -5,11 +5,11 @@
  */
 package Program;
 
-import LogIn.iChatUser;
-import PrivateChat.iChatMessage;
+import Utils.iChatIOManager;
+import Utils.iChatUser;
+import Utils.iChatMessage;
 import PrivateChat.iChatPrivateChatUI;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -22,7 +22,7 @@ import javax.swing.JScrollPane;
 
 /**
  * 主程序窗口
- * @author a8756
+ * @author ZhouHeng
  */
 public class MainUI extends javax.swing.JFrame implements ClosePrivateWindowListener{
     private Socket socket;              //私聊服务器连接
@@ -33,7 +33,10 @@ public class MainUI extends javax.swing.JFrame implements ClosePrivateWindowList
     private HashSet<iChatUser> onlineListSet;   //在线用户数据容器
     
     /**
-     * Creates new form MainUI
+     * 创建一个MainUI窗体
+     * @param socket 服务端连接
+     * @param user 登录用户
+     * @param onlineListSet 在线用户列表 
      */
     public MainUI(Socket socket, iChatUser user, HashSet<iChatUser> onlineListSet) {
         this.socket = socket;
@@ -47,16 +50,11 @@ public class MainUI extends javax.swing.JFrame implements ClosePrivateWindowList
         friendsList = new JList(friendsListModel);
         friendsList.setCellRenderer(new iChatUserListRenderer(250,40,new Font("微软雅黑",0,18)));
         friendsList.setSize(jListPanel.getWidth(), jListPanel.getHeight());
-        //friendsList.setPreferredSize(new Dimension(245,450));
-        //friendsList.setBounds(15, 50, 245, 450);
 
         /*添加滚动条*/
         JScrollPane jp = new JScrollPane(friendsList);
         jp.setSize(jListPanel.getWidth(), jListPanel.getHeight());
-        //jp.setPreferredSize(new Dimension(270,535));
-        //jp.setBounds(15, 50, 255, 450);
-        
-        //add(friendsList);
+
         friendsList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {   //When double click JList  
@@ -71,7 +69,6 @@ public class MainUI extends javax.swing.JFrame implements ClosePrivateWindowList
     }
     
     public void updateOnlineList(HashSet<iChatUser> newList) {
-        System.out.println("update");
         friendsListModel = new iChatFriendsListModel(newList);
         friendsList.setModel(friendsListModel);
         //更新群聊的List
@@ -79,11 +76,10 @@ public class MainUI extends javax.swing.JFrame implements ClosePrivateWindowList
     }
     
     /**
-     * JList鼠标双击事件
-     * 打开一个窗口
+     * JList鼠标双击事件,打开一个窗口
+     * @param value value
      */
     private void jListDoubleClick(Object value) {
-        System.out.println("double click");
         iChatUser targetUser = (iChatUser)value;
         //窗口关闭监听管理器
         ClosePrivateWindowManager manager = new ClosePrivateWindowManager();
@@ -205,40 +201,6 @@ public class MainUI extends javax.swing.JFrame implements ClosePrivateWindowList
         }
     }//GEN-LAST:event_formWindowClosing
 
-    /**
-     * @param args the command line arguments
-     */
-//    public static void main(String args[]) {
-//        /* Set the Nimbus look and feel */
-//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-//         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(MainUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//        //</editor-fold>
-//
-//        /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new MainUI().setVisible(true);
-//            }
-//        });
-//    }
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -247,12 +209,13 @@ public class MainUI extends javax.swing.JFrame implements ClosePrivateWindowList
     private javax.swing.JPanel jListPanel;
     private javax.swing.JLabel welcomeLabel;
     // End of variables declaration//GEN-END:variables
-
+    
+    /**
+     * 实现关闭窗口方法
+     */
     @Override
     public void closingPrivateWindow(ClosePrivateWindowEvent event) {
-        /**
-         * 实现关闭窗口方法
-         */
+        
         ioManager.removeValue(event.getTargetUser());//删除容器内该窗口   
     }
 

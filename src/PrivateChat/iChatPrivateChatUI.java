@@ -5,36 +5,33 @@
  */
 package PrivateChat;
 
-import FileTransfer.FileReceiver;
+import Utils.iChatFileMessage;
+import Utils.iChatMessage;
 import FileTransfer.FileSender;
 import FileTransfer.FileTransferProgress;
-import LogIn.iChatUser;
+import Utils.iChatUser;
 import Program.ClosePrivateWindowManager;
-import Program.iChatIOManager;
+import Utils.iChatIOManager;
 import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JProgressBar;
 
 /**
- *
- * @author a8756
+ * 私聊窗口
+ * @author ZhouHeng
  */
 public class iChatPrivateChatUI extends javax.swing.JFrame {
     private iChatIOManager ioManager;                       //主程序IO模块
     private iChatUser targetUser;                           //目标用户
     private ClosePrivateWindowManager closeWindowManager;   //私聊窗口关闭管理器
     
-
     /**
-     * Creates new form iChatPrivateChatUI
+     * 创建一个新的iChatPrivateChatUI窗体
+     * @param ioManager 后台I/O管理
+     * @param targetUser 目标用户
+     * @param manager 监听管理器
      */
     public iChatPrivateChatUI(iChatIOManager ioManager, iChatUser targetUser, ClosePrivateWindowManager manager) {
         this.targetUser = targetUser;
@@ -51,7 +48,7 @@ public class iChatPrivateChatUI extends javax.swing.JFrame {
     
     /**
      * 显示接收到的消息
-     * @param msg 
+     * @param msg 消息
      */
     public void setReceiveAreaMsg(iChatMessage msg) {
         iChatUser user= msg.getSource();
@@ -63,31 +60,17 @@ public class iChatPrivateChatUI extends javax.swing.JFrame {
     
     /**
      * 启动文件传输
-     * @param IPAddress
-     * @param file 
+     * @param file 发送文件
      */
-    public void startToSendFile(iChatFileMessage msg) {
-        System.out.println("开始发送文件！");
-        String IPAddress = msg.getMsg();
-        File file = msg.getFile();
+    public void startToSendFile(File file) {
         //显示传输对话框
-        //sendDialog.setVisible(true);
         FileTransferProgress sendProgress = new FileTransferProgress(FileTransferProgress.SEND_PROGRESS);
         sendProgress.setVisible(true);
         //创建sender
-        FileSender sender = new FileSender(IPAddress, sendProgress);
-        sender.sendFile(file);
-        //关闭传输进度窗口
-        //sendProgress.dispose();
-        //sendDialog.setVisible(false);
+        FileSender sender = new FileSender(file,sendProgress);
+        new Thread(sender).start();
     }
-    
-    public void initFileReceiver() {
-        
-    }
-    
-    
-    
+   
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -251,8 +234,7 @@ public class iChatPrivateChatUI extends javax.swing.JFrame {
         File sendFile = sendFileChooser.getSelectedFile();
         //文件发送请求
         ioManager.sendMessage(new iChatFileMessage(targetUser, ioManager.getUser(), 
-                iChatFileMessage.SEND_FILE_MESSAGE,sendFile,null));   
-        //System.out.println("选择文件：" + sendFile.getAbsolutePath());
+                iChatFileMessage.SEND_FILE_MESSAGE,sendFile));   
     }//GEN-LAST:event_sendFileBtMouseClicked
 
 

@@ -5,14 +5,14 @@
  */
 package Program;
 
-import LogIn.iChatUser;
+import Utils.iChatUser;
 import java.util.ArrayList;
 import java.util.HashSet;
 import javax.swing.AbstractListModel;
 
 /**
  * 自定义表格
- * @author a8756
+ * @author ZhouHeng
  */
 public class iChatFriendsListModel extends AbstractListModel {
     private ArrayList<iChatUser> onlineUsers;         //在线列表

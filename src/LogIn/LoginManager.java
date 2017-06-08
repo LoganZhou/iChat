@@ -8,15 +8,16 @@ package LogIn;
 import java.util.Vector;
 
 /**
- * 登陆事件源
- * 相当于一个遥控器
- * @author a8756
+ * 登陆事件源管理器
+ * 相当于一个遥控器，管理监听者
+ * @author ZhouHeng
  */
 public class LoginManager {
     private Vector<LoginListener> listeners;
     
     /**
      * 添加事件监听
+     * @param listener 监听者
      */
     public void addLoginListener(LoginListener listener) {
         if (listeners == null) {
@@ -27,6 +28,7 @@ public class LoginManager {
     
     /**
      * 移除事件监听
+     * @param listener 监听者
      */
     public void removeLoginListener(LoginListener listener) {
         if (listeners == null) {

@@ -9,64 +9,54 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
+import org.apache.log4j.Logger;
 
 /**
- * 文件接收器（线程类）
- * @author a8756
+ * 客户端文件接收器（多线程）
+ * @author ZhouHeng
  */
 public class FileReceiver implements Runnable{
-    private ServerSocket socket;
-    private Socket sender;
+    private Socket socket;
     private DataInputStream dis;
     private FileOutputStream fos;
     private FileTransferProgress progressDialog;
     private File file;
-    private boolean Ready = false;
+    static private Logger logger = Logger.getLogger(FileReceiver.class);
     /**
      * 初始化文件接收器
-     * @param socket
-     * @param progressDialog 
+     * @param progressDialog 传输进度对话框
+     * @param file 保存文件
      */
-    public FileReceiver(ServerSocket socket, FileTransferProgress progressDialog, File file) {
-        this.socket = socket;
+    public FileReceiver(FileTransferProgress progressDialog, File file) {
+        try {
+            this.socket = new Socket("127.0.0.1",14849);
+        } catch (IOException ex) {
+            logger.error("连接文件传输中转服务器失败！", ex);
+        }
         this.progressDialog = progressDialog;
         this.file = file;
-        this.Ready = false;
     }
     
     private void saveFile() {
         //等待连接
         try {
-            Ready = true;        //进入就绪态
-            sender = socket.accept();
-            dis = new DataInputStream(sender.getInputStream());          
+            dis = new DataInputStream(socket.getInputStream());          
        
             //文件名和长度
             String fileName = dis.readUTF();
             long fileLength = dis.readLong();
-            System.out.println("Receiver:" + file.getAbsoluteFile());
+            logger.info("准备开始接收文件...");
             File saveFile = null;
             if (file.isDirectory()){
-                saveFile = new File(file.getAbsolutePath()+fileName);
-                System.out.println("dir="+file.getCanonicalPath());
+                logger.error("非法操作，该文件为路径！");
             }
             else {
                 saveFile = file;
-                System.out.println(file.getAbsoluteFile());
+                logger.info("文件保存路径为：" + saveFile.getAbsolutePath());
             }
             fos = new FileOutputStream(saveFile);
-            
-            //弹出进度条对话框
-//            receiveProgressBar.setVisible(true);
-//            if (receiveProgressBar == null) {
-//                System.out.println("bar is null");
-//            }
             //接收文件
             long progress = 0;
             byte[] bytes = new byte[1024];
@@ -76,15 +66,13 @@ public class FileReceiver implements Runnable{
                 fos.flush();
                 progress += length;
                 progressDialog.getProgressBar().setValue((int) (100*progress/fileLength));
-                System.out.println("save:"+(100*progress/fileLength));
             }
             //完成传输对话框，点击确定关闭
             progressDialog.dispose();
             JOptionPane.showMessageDialog(null, "文件接收成功！");
-            
-            //System.out.println("========== 文件接收成功 ===========");
+            logger.info("文件接收成功！");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("文件传输IO流出错！", e);
         } finally {
             try {
                 if (fos != null) {
@@ -93,16 +81,11 @@ public class FileReceiver implements Runnable{
                 if (dis != null) {
                     dis.close();
                 }
-                sender.close();
                 socket.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("文件传输IO流关闭出错！", e);
             }
         }
-    }
-
-    public boolean is_Ready() {
-        return Ready;
     }
 
     @Override

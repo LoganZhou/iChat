@@ -3,22 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package LogIn;
+package SignIn;
 
+import Utils.iChatConnection;
+import Utils.iChatUser;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
+import org.apache.log4j.Logger;
 
 /**
  *
- * @author a8756
+ * @author ZhouHeng
  */
 public class SignInUI extends javax.swing.JFrame {
-
+    static private Logger logger = Logger.getLogger(SignInUI.class);
+    
     /**
      * Creates new form iChatSignIn
      */
@@ -159,7 +160,6 @@ public class SignInUI extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(400, 230));
         setSize(new java.awt.Dimension(400, 230));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
@@ -270,8 +270,9 @@ public class SignInUI extends javax.swing.JFrame {
         iChatUser newUser = new iChatUser(userName, passwd);
         if (signIn(newUser)!=0) {
             //注册成功
-            userIDTextField.setText(String.valueOf(returnID(newUser)));
+            userIDTextField.setText(String.valueOf(returnID()));
             signInSucceedDialog.setVisible(true);
+            logger.info("注册成功！");
         } 
     }//GEN-LAST:event_signInButtonMouseClicked
 
@@ -295,15 +296,14 @@ public class SignInUI extends javax.swing.JFrame {
         
     }//GEN-LAST:event_formWindowClosed
     
+    /**
+     * 注册新用户
+     * @param user 新用户用户信息
+     * @return 表修改成功条数
+     */
     private int signIn(iChatUser user) {
-        /**
-         * 注册模块
-         * 参数： iChatUser user
-         * 返回值： 表修改成功条数
-         */
         Connection conn = iChatConnection.getConn();
         int i = 0;
-        long userID;
         String sql = "insert into user (User_name, Password) value(?,?)";
         PreparedStatement pstmt;
         try {
@@ -314,40 +314,39 @@ public class SignInUI extends javax.swing.JFrame {
             pstmt.close();
             conn.close();
         } catch (SQLException e) {
-            //e.printStackTrace();
-            //System.out.println("注册失败：用户名重复！");
-            //注册失败
+           
+            e.printStackTrace();
             signInFailedDialog.setVisible(true);
         }
         return i;
     }
     
-    private long returnID(iChatUser user) {
+    /**
+     * 返回新用户注册的用户ID
+     * @return 新用户注册ID
+     */
+    private long returnID() {
         Connection conn = iChatConnection.getConn();
-        long userID;
-        String UID = null;
-        String getID = "select User_ID from iChat.`user` where iChat.`user`.`User_Name` = ?";
+        //long userID;
+        long UID = 0;
+        String getID = "select max(`user`.`User_ID`) from `user`";
         PreparedStatement pstmt;
         try {
             pstmt = (PreparedStatement) conn.prepareStatement(getID);
-            pstmt.setString(1,user.getUserName());
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                UID = rs.getString(1);
+                UID = rs.getLong(1);
             }
-            userID = Long.valueOf(UID);
             pstmt.close();
-            user.setUserID(userID);
-            return userID;
+            return UID;
         } catch (SQLException e) {
-            //e.printStackTrace();
-            System.out.println("查询失败！");
+            logger.error("SQL执行出错！",e);
             return -1;
         } finally {
             try {
                 conn.close();
             } catch (SQLException ex) {
-                Logger.getLogger(iChatUser.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error("关闭数据库连接出错！",ex);
             }
         }
     }

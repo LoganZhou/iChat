@@ -7,7 +7,7 @@ package Program;
 
 /**
  * 私聊窗口关闭监听接口
- * @author a8756
+ * @author ZhouHeng
  */
 public interface ClosePrivateWindowListener {
     public void closingPrivateWindow(ClosePrivateWindowEvent event);

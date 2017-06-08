@@ -5,13 +5,12 @@
  */
 package GroupChat;
 
-import LogIn.iChatUser;
-import PrivateChat.iChatMessage;
+import Utils.iChatUser;
+import Utils.iChatMessage;
 import Program.iChatFriendsListModel;
-import Program.iChatIOManager;
+import Utils.iChatIOManager;
 import Program.iChatUserListRenderer;
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.text.DateFormat;
 import java.util.HashSet;
@@ -22,7 +21,7 @@ import javax.swing.JScrollPane;
 
 /**
  * 群聊窗口
- * @author a8756
+ * @author ZhouHeng
  */
 public class iChatGroupChatUI extends javax.swing.JFrame {
     private iChatIOManager ioManager;       //IO管理
@@ -31,7 +30,10 @@ public class iChatGroupChatUI extends javax.swing.JFrame {
     private iChatFriendsListModel friendsListModel; 
     
     /**
-     * Creates new form iChatGroupChatUI
+     * 创建新的iChatGroupChatUI窗体
+     * @param myself 登录用户
+     * @param ioManager 后台I/O管理器
+     * @param onlineListSet 在线用户列表
      */
     public iChatGroupChatUI(iChatUser myself, iChatIOManager ioManager, HashSet<iChatUser> onlineListSet) {
         this.myself = myself;
@@ -55,7 +57,7 @@ public class iChatGroupChatUI extends javax.swing.JFrame {
 
     /**
      * 更新群聊窗口中在线用户
-     * @param newList 
+     * @param newList 新的在线用户列表
      */
     public void updateOnlineList(HashSet<iChatUser> newList) {
         friendsListModel = new iChatFriendsListModel(newList);
@@ -64,7 +66,7 @@ public class iChatGroupChatUI extends javax.swing.JFrame {
     
     /**
      * 显示消息到消息接收文本框
-     * @param msg 
+     * @param msg 消息
      */
     public void showMessage(iChatMessage msg) {
         iChatUser source = msg.getSource();

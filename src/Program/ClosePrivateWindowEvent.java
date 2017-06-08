@@ -5,12 +5,12 @@
  */
 package Program;
 
-import LogIn.iChatUser;
+import Utils.iChatUser;
 import java.util.EventObject;
 
 /**
  * 私聊窗口关闭事件
- * @author a8756
+ * @author ZhouHeng
  */
 public class ClosePrivateWindowEvent extends EventObject{
     private iChatUser targetUser;

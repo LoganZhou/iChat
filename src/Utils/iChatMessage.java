@@ -3,16 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package PrivateChat;
+package Utils;
 
-import LogIn.iChatUser;
+import Utils.iChatUser;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 私聊消息类
+ * 消息类
  * 将User信息和信息打包
- * @author a8756
+ * @author ZhouHeng
  */
 public class iChatMessage implements Serializable{
     private iChatUser source;       //消息发送者
@@ -24,17 +24,15 @@ public class iChatMessage implements Serializable{
     
     public static final int GROUP_MESSAGE = 2; //群聊消息
     public static final int PRIVATE_MESSAGE = 1; //私聊消息
-    public static final int SEND_FILE_MESSAGE = 3;//发送文件请求
-    public static final int ACCEPT_FILE_MESSAGE = 4;//接受文件请求
-    public static final int REJECT_FILE_MESSAGE = 5;//拒绝文件请求
     public static final boolean CLOSE_CONNECTION = true;
     
     /**
      * 私聊消息构造函数
      * 消息类别：1
-     * @param target
-     * @param source
-     * @param msg 
+     * @param target 目标用户
+     * @param source 发送用户
+     * @param msg  消息
+     * @param messageType 消息类别
      */
     public iChatMessage(iChatUser target, iChatUser source, String msg, int messageType) {
         this.target = target;
@@ -47,8 +45,8 @@ public class iChatMessage implements Serializable{
     /**
      * 群聊消息构造函数
      * 消息类别：2
-     * @param source
-     * @param msg
+     * @param source 发送用户
+     * @param msg 消息
      */
     public iChatMessage(iChatUser source, String msg) {
         this.target = null;
@@ -58,16 +56,13 @@ public class iChatMessage implements Serializable{
         isDisconnect = false;
     }
     
-    
     /**
      * 关闭连接通知
-     * @param isDisconnect 
+     * @param isDisconnect 是否关闭连接
      */
     public iChatMessage(boolean isDisconnect) {
         this.isDisconnect = isDisconnect;
     }
-    
-    
     
     public boolean isDisconnect() {
         return isDisconnect;
@@ -80,8 +75,7 @@ public class iChatMessage implements Serializable{
     public Date getMsgSendTime() {
         return msgSendTime;
     }
-    
-    
+
     public iChatUser getTarget() {
         return target;
     }

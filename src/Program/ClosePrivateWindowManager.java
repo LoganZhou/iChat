@@ -5,13 +5,13 @@
  */
 package Program;
 
-import LogIn.iChatUser;
+import Utils.iChatUser;
 import java.util.Vector;
 
 /**
  * 私聊窗口关闭事件管理器
  * 当有私聊窗口关闭时，触发关闭动作
- * @author a8756
+ * @author ZhouHeng
  */
 public class ClosePrivateWindowManager {
     private static final Vector<ClosePrivateWindowListener> listeners
@@ -25,6 +25,7 @@ public class ClosePrivateWindowManager {
     
     /**
      * 添加事件
+     * @param listener 需要添加关闭私聊窗口事件监听者
      */
     public void addClosePrivateWindowListener(ClosePrivateWindowListener listener) {
         listeners.add(listener);
@@ -32,6 +33,7 @@ public class ClosePrivateWindowManager {
     
     /**
      * 移除事件
+     * @param listener 需要移除私聊窗口事件监听者
      */
     public void removeClosePrivateWindowListener(ClosePrivateWindowListener listener) {
         listeners.remove(listener);

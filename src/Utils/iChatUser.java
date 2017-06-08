@@ -3,16 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package LogIn;
+package Utils;
 import java.io.Serializable;
-import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * iChatUser类
  * 存储用户信息
- * @author a8756
+ * @author ZhouHeng
  */
 public class iChatUser implements Serializable{
     private String userName;
@@ -21,8 +18,8 @@ public class iChatUser implements Serializable{
 
     /**
      * 登陆用User构造函数
-     * @param userID
-     * @param password 
+     * @param userID 用户iD
+     * @param password 密码
      */
     public iChatUser(long userID, String password) {
         this.userID = userID;
@@ -38,8 +35,8 @@ public class iChatUser implements Serializable{
     
     /**
      * 注册用User构造函数
-     * @param userName
-     * @param password 
+     * @param userName 用户名
+     * @param password 密码
      */
     public iChatUser(String userName, String password) {
         this.userName = userName;
@@ -61,27 +58,6 @@ public class iChatUser implements Serializable{
         result = 37 * result + userName.hashCode();
         result = 37 * result + (int)(userID^(userID >>> 32));
         return result;
-    }
-    
-    private void selectAll() {
-        Connection conn = iChatConnection.getConn();
-        String sql = "select * from user";
-        PreparedStatement pstmt;
-        try {
-            pstmt = (PreparedStatement)conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery();
-            int col = rs.getMetaData().getColumnCount();
-            System.out.println("+--------------------------+");
-            while (rs.next()) {
-                for (int i=1;i<=col;i++) {
-                    System.out.print(rs.getString(i) + "\t");
-                }
-                System.out.println("\n+--------------------------+");
-            }
-            System.out.println();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     public String getUserName() {

@@ -8,9 +8,13 @@ package LogIn;
 import java.util.EventListener;
 
 /**
- * 登陆监听接口，负责监听LoginEvent事件
- * @author a8756
+ * 登陆事件监听接口，负责监听LoginEvent事件
+ * @author ZhouHeng
  */
 public interface LoginListener extends EventListener {
+    /**
+     * 响应登陆事件
+     * @param event 登陆事件
+     */
     public void loginEvent(LoginEvent event);
 }

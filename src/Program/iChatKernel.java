@@ -8,8 +8,8 @@ package Program;
 import LogIn.LoginEvent;
 import LogIn.LoginListener;
 import LogIn.LoginUI;
-import LogIn.iChatConnection;
-import LogIn.iChatUser;
+import Utils.iChatConnection;
+import Utils.iChatUser;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.Connection;
@@ -17,13 +17,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 /**
- * 聊天准备主程序
- * 负责登陆验证等操作，登陆成功后由主程序接管
- * @author a8756
+ * 聊天准备主程序，也是客户端启动入口
+ * 负责登陆验证等操作，登陆成功后由显示主界面窗口
+ * @author ZhouHeng
  */
 public class iChatKernel implements LoginListener{
     private Socket socket;                  //与服务器的连接
@@ -31,6 +30,7 @@ public class iChatKernel implements LoginListener{
     private MainUI mainWindow;              //主界面窗口
     private LoginUI loginWindow;            //登陆窗口
     private iChatUser user;                 //当前用户
+    static private Logger logger = Logger.getLogger(iChatKernel.class);
     
     public iChatKernel() {
         loginWindow = new LoginUI();
@@ -45,11 +45,15 @@ public class iChatKernel implements LoginListener{
          */
         try {
             if (this.socket == null) {
-                socket = new Socket("127.0.0.1",4444);
+                socket = new Socket("127.0.0.1",8756);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("连接聊天服务器失败！",e);
         }
+        if (socket == null) {
+            logger.debug("连接聊天服务器Socket为空！");
+        }
+        
     }
     
     public static void main(String[] args) {
@@ -62,7 +66,6 @@ public class iChatKernel implements LoginListener{
          * 登陆事件监听接口实现
          * 调用登陆方法
          */
-        System.out.println("登陆成功");
         this.user = loginWindow.getUser();
         this.loginWindow.dispose();
         initSocket();
@@ -107,13 +110,13 @@ public class iChatKernel implements LoginListener{
                     onlineUsers = latest;
                     mainWindow.updateOnlineList(onlineUsers);
                 } catch (SQLException ex) {
-                    Logger.getLogger(iChatKernel.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.error("SQL执行出错！",ex);                    
                 }
                 try {
                     //每10s刷新一次
                     Thread.sleep(1000*10);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(iChatKernel.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.error("更新在线用户数据线程休眠出错！",ex);
                 }
             }
         }
