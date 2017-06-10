@@ -18,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 /**
  * 聊天准备主程序，也是客户端启动入口
@@ -33,6 +34,9 @@ public class iChatKernel implements LoginListener{
     static private Logger logger = Logger.getLogger(iChatKernel.class);
     
     public iChatKernel() {
+        //配置log
+        PropertyConfigurator.configure("log4j.properties");
+        
         loginWindow = new LoginUI();
         loginWindow.setVisible(true);
         loginWindow.addLoginListener(this);
@@ -45,7 +49,7 @@ public class iChatKernel implements LoginListener{
          */
         try {
             if (this.socket == null) {
-                socket = new Socket("127.0.0.1",8756);
+                socket = new Socket("119.29.8.35",8756);
             }
         } catch (IOException e) {
             logger.error("连接聊天服务器失败！",e);

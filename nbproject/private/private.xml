@@ -5,9 +5,13 @@
         <group>
             <file>file:/Users/zhouheng/Code/iChat/src/Utils/iChatIOManager.java</file>
             <file>file:/Users/zhouheng/Code/iChat/src/FileTransfer/FileReceiver.java</file>
+            <file>file:/Users/zhouheng/Code/iChat/src/Server/iChatServer.java</file>
             <file>file:/Users/zhouheng/Code/iChat/src/FileTransfer/FileSender.java</file>
             <file>file:/Users/zhouheng/Code/iChat/src/Utils/iChatFileMessage.java</file>
             <file>file:/Users/zhouheng/Code/iChat/src/Utils/iChatConnection.java</file>
+            <file>file:/Users/zhouheng/Code/iChat/src/FileTransfer/FileTransferProgress.java</file>
+            <file>file:/Users/zhouheng/Code/iChat/src/LogIn/LoginUI.java</file>
+            <file>file:/Users/zhouheng/Code/iChat/src/Program/iChatKernel.java</file>
         </group>
     </open-files>
 </project-private>

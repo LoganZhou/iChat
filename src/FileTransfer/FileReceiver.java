@@ -31,7 +31,7 @@ public class FileReceiver implements Runnable{
      */
     public FileReceiver(FileTransferProgress progressDialog, File file) {
         try {
-            this.socket = new Socket("127.0.0.1",14849);
+            this.socket = new Socket("119.29.8.35",14849);
         } catch (IOException ex) {
             logger.error("连接文件传输中转服务器失败！", ex);
         }

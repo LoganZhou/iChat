@@ -29,7 +29,7 @@ public class FileSender implements Runnable{
     
     public FileSender(File sendFile, FileTransferProgress progressDialog) {
         try {
-            this.socket = new Socket("127.0.0.1", 14848);
+            this.socket = new Socket("119.29.8.35", 14848);
         } catch (IOException ex) {
             logger.error("文件发送Socket初始化失败！", ex);
         }
