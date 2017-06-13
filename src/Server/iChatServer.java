@@ -50,7 +50,7 @@ public class iChatServer {
             serverSocket = new ServerSocket(8756);
             serverLogger.info("服务端启动成功！");
         } catch (IOException e) {
-            serverLogger.fatal("服务端启动失败，程序结束！");
+            serverLogger.fatal("服务端启动失败，程序结束！",e);
             System.exit(1);
         }
         //文件中转资源
@@ -69,7 +69,7 @@ public class iChatServer {
             try {
                 clientSocket = serverSocket.accept();
             } catch (IOException e) {
-                serverLogger.fatal("客户端连接失败，程序退出！");
+                serverLogger.fatal("客户端连接失败，程序退出！", e);
                 System.exit(1);
             }
             serverLogger.info("客户端连接成功！");

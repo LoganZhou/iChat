@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 /**
  * 客户端文件接收器（多线程）
+ * 通信服务器：119.29.8.35：14849
  * @author ZhouHeng
  */
 public class FileReceiver implements Runnable{
